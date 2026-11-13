@@ -1,0 +1,24 @@
+
+:root { --primary: #064e3b; --accent: #d97706; --bg-dark: #0f172a; --bg-light: #f8fafc; }
+body { font-family: 'Tahoma', sans-serif; background: var(--bg-light); margin: 0; direction: rtl; color: #1e293b; }
+.auth-wrapper { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #064e3b, #0f172a); padding: 20px; }
+.auth-box { background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); width: 400px; text-align: center; }
+input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 14px; }
+button { width: 100%; padding: 12px; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+button:hover { background: #047857; }
+.secondary-btn { background: #64748b; }
+.dashboard-layout { display: flex; min-height: 100vh; }
+sidebar { width: 260px; background: var(--bg-dark); color: #fff; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+sidebar ul { list-style: none; padding: 0; margin: 0; }
+sidebar li { padding: 12px 15px; margin-bottom: 8px; border-radius: 6px; cursor: pointer; }
+sidebar li:hover, sidebar li.active { background: rgba(52, 211, 153, 0.2); color: #34d399; }
+.main-content { flex: 1; padding: 30px; overflow-y: auto; }
+.card { background: #fff; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px; }
+table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+th, td { padding: 12px; text-align: center; border-bottom: 1px solid #e2e8f0; }
+th { background: #f1f5f9; }
+.badge-active { background: #d1fae5; color: #065f46; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.badge-frozen { background: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+.security-toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #0f172a; color: #fff; border: 2px solid #f59e0b; padding: 16px 24px; border-radius: 10px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); z-index: 9999; max-width: 450px; width: 90%; display: none; }
+.otp-digits { display: flex; gap: 8px; justify-content: center; direction: ltr; margin: 15px 0; }
+.otp-digits input { width: 45px; height: 50px; text-align: center; font-size: 22px; font-weight: bold; border: 2px solid #cbd5e1; border-radius: 8px; }

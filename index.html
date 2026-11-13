@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>بنك الأمان - التحقق الشامل OTP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="security-toast" class="security-toast">
+        <strong style="color:#fbbf24;">📩 رمز التحقق (OTP) المرسل لهاتفك وبريدك:</strong>
+        <div id="toast-body" style="font-size:18px; font-weight:bold; color:#34d399; margin:10px 0;"></div>
+        <button onclick="autoFillOtp()" style="background:#d97706; padding:6px; font-size:12px;">نسخ وتعبئة الرمز تلقائياً</button>
+        <span onclick="document.getElementById('security-toast').style.display='none'" style="cursor:pointer; float:left; color:#94a3b8;">✖</span>
+    </div>
+
+    <div id="auth-screen" class="auth-wrapper">
+        <div class="auth-box">
+            <h2>بنك الأمان (BANK AL-AMAN)</h2>
+            
+            <div id="login-form">
+                <input type="text" id="login-user" placeholder="اسم المستخدم (مثال: hassan أو admin)">
+                <input type="password" id="login-pin" placeholder="الرمز السري (PIN)">
+                <button onclick="requestLoginOtp()">متابعة وتسجيل الدخول (يطلب OTP)</button>
+                <button class="secondary-btn" onclick="showRegister()">فتح حساب جديد (يطلب OTP)</button>
+                <div style="margin-top:15px; font-size:12px; color:#64748b; text-align:right;">
+                    • العميل: <code>hassan</code> / <code>1234</code><br>
+                    • العميل 2: <code>mohamed</code> / <code>1234</code><br>
+                    • الأدمن: <code>admin</code> / <code>admin123</code>
+                </div>
+            </div>
+
+            <div id="register-form" style="display:none;">
+                <h3>فتح حساب بنكي جديد</h3>
+                <input type="text" id="reg-name" placeholder="الاسم الكامل">
+                <input type="text" id="reg-user" placeholder="اسم المستخدم (انجليزي)">
+                <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
+                <input type="text" id="reg-phone" placeholder="رقم الجوال">
+                <input type="password" id="reg-pin" placeholder="الرمز السري (PIN)">
+                <button onclick="requestRegisterOtp()">إرسال رمز التحقق لإنشاء الحساب</button>
+                <button class="secondary-btn" onclick="showLogin()">العودة</button>
+            </div>
+
+            <div id="otp-screen" style="display:none;">
+                <h3 style="color:#d97706;">رمز التحقق الأمني (OTP)</h3>
+                <p id="otp-desc" style="font-size:13px; color:#475569;"></p>
+                <div class="otp-digits" id="otp-inputs">
+                    <input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1">
+                </div>
+                <button onclick="verifyCurrentOtp()" style="background:#059669;">تأكيد وإتمام العملية</button>
+                <button class="secondary-btn" onclick="cancelOtp()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="client-dashboard" class="dashboard-layout" style="display:none;">
+        <sidebar>
+            <div>
+                <h2>بنك الأمان</h2>
+                <ul>
+                    <li class="active" onclick="switchClientTab('overview', this)">لوحة المعلومات</li>
+                    <li onclick="switchClientTab('transfer', this)">تحويل الأموال (يطلب OTP)</li>
+                    <li onclick="switchClientTab('loans', this)">طلب قرض أو تمويل (يطلب OTP)</li>
+                </ul>
+            </div>
+            <div><button class="secondary-btn" onclick="location.reload()">تسجيل الخروج</button></div>
+        </sidebar>
+        <div class="main-content">
+            <header><h1 id="client-welcome" style="color:var(--primary); margin:0;"></h1></header>
+
+            <div id="tab-overview" class="client-tab-content">
+                <div class="card">
+                    <h3>الرصيد الحالي</h3>
+                    <div style="font-size:24px; font-weight:bold; color:var(--primary);"><span id="lbl-balance">0</span> SAR</div>
+                    <p><strong>IBAN:</strong> <span id="info-iban"></span></p>
+                </div>
+                <div class="card">
+                    <h3>سجل العمليات</h3>
+                    <table><thead><tr><th>إلى</th><th>المبلغ</th><th>التوقيت</th></tr></thead><tbody id="client-tx-tbody"></tbody></table>
+                </div>
+            </div>
+
+            <div id="tab-transfer" class="client-tab-content" style="display:none;">
+                <div class="card">
+                    <h2>تحويل الأموال (يتطلب رمز تحقق OTP دائماً)</h2>
+                    <input type="text" id="transfer-recipient" placeholder="اسم المستفيد أو IBAN (مثل mohamed)">
+                    <input type="number" id="transfer-amount" placeholder="المبلغ (SAR)">
+                    <button onclick="requestTransferOtp()">إرسال التحويل (طلب رمز OTP)</button>
+                </div>
+            </div>
+
+            <div id="tab-loans" class="client-tab-content" style="display:none;">
+                <div class="card">
+                    <h2>طلب قرض أو خدمة بنكية (يتطلب رمز تحقق OTP دائماً)</h2>
+                    <select id="service-type">
+                        <option value="قرض شخصي فوري">قرض شخصي فوري</option>
+                        <option value="تمويل سيارات">تمويل سيارات</option>
+                        <option value="إصدار بطاقة ائتمانية إضافية">إصدار بطاقة ائتمانية إضافية</option>
+                    </select>
+                    <input type="number" id="service-amount" placeholder="المبلغ المطلوب (SAR)">
+                    <button onclick="requestServiceOtp()">تقديم الطلب (طلب رمز OTP)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-dashboard" class="dashboard-layout" style="display:none;">
+        <sidebar>
+            <div>
+                <h2>مركز الأدمن</h2>
+                <ul>
+                    <li class="active" onclick="loadAdminData()">إدارة المستخدمين والقروض</li>
+                </ul>
+            </div>
+            <div><button class="secondary-btn" onclick="location.reload()">تسجيل الخروج</button></div>
+        </sidebar>
+        <div class="main-content">
+            <h1>مركز التحكم الشامل (Admin Command Center)</h1>
+            <div class="card">
+                <h2>العملاء</h2>
+                <table><thead><tr><th>الاسم</th><th>الرصيد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="admin-users-tbody"></tbody></table>
+            </div>
+            <div class="card">
+                <h2>طلبات القروض والخدمات</h2>
+                <table><thead><tr><th>العميل</th><th>الخدمة</th><th>المبلغ</th><th>القرار</th></tr></thead><tbody id="admin-loans-tbody"></tbody></table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let activeOtpAction = null;
+        let cachedData = {};
+        let currentOtpCode = '';
+
+        function showToast(otp) {
+            currentOtpCode = otp;
+            document.getElementById('toast-body').innerText = otp;
+            document.getElementById('security-toast').style.display = 'block';
+        }
+        function autoFillOtp() {
+            const inputs = document.querySelectorAll('#otp-inputs input');
+            currentOtpCode.split('').forEach((d, i) => { if(inputs[i]) inputs[i].value = d; });
+            document.getElementById('security-toast').style.display = 'none';
+        }
+        function showOtpScreen(desc, action) {
+            activeOtpAction = action;
+            document.getElementById('auth-screen').style.display = 'flex';
+            document.getElementById('client-dashboard').style.display = 'none';
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('otp-desc').innerText = desc;
+            document.getElementById('otp-screen').style.display = 'block';
+            document.querySelectorAll('#otp-inputs input').forEach(i => i.value = '');
+        }
+        function cancelOtp() {
+            document.getElementById('otp-screen').style.display = 'none';
+            document.getElementById('security-toast').style.display = 'none';
+            if (currentUser) {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('client-dashboard').style.display = 'flex';
+            } else {
+                document.getElementById('login-form').style.display = 'block';
+            }
+        }
+
+        async function requestLoginOtp() {
+            const username = document.getElementById('login-user').value;
+            const pin = document.getElementById('login-pin').value;
+            const res = await fetch('/api/auth/login-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username, pin}) });
+            const data = await res.json();
+            if(!data.success) return alert(data.message);
+            showToast(data.otpPreview);
+            showOtpScreen(`أدخل رمز التحقق (OTP) لتسجيل الدخول للحساب: ${username}`, 'login');
+        }
+
+        async function requestRegisterOtp() {
+            const name = document.getElementById('reg-name').value;
+            const username = document.getElementById('reg-user').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-phone').value;
+            const pin = document.getElementById('reg-pin').value;
+            const res = await fetch('/api/auth/register-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, username, email, phone, pin}) });
+            const data = await res.json();
+            if(!data.success) return alert(data.message);
+            cachedData.regPayload = {name, username, email, phone, pin};
+            showToast(data.otpPreview);
+            showOtpScreen('أدخل رمز التحقق (OTP) لتأكيد فتح الحساب البنكي الجديد.', 'register');
+        }
+
+        async function requestTransferOtp() {
+            const recipientIban = document.getElementById('transfer-recipient').value;
+            const amount = document.getElementById('transfer-amount').value;
+            const res = await fetch('/api/transfer-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senderId: currentUser.id, recipientIban, amount}) });
+            const data = await res.json();
+            if(!data.success) return alert(data.message);
+            cachedData.transferPayload = {senderId: currentUser.id, recipientIban, amount};
+            showToast(data.otpPreview);
+            showOtpScreen(`أدخل رمز التحقق (OTP) لتأكيد تحويل مبلغ ${amount} SAR`, 'transfer');
+        }
+
+        async function requestServiceOtp() {
+            const serviceType = document.getElementById('service-type').value;
+            const amount = document.getElementById('service-amount').value;
+            const res = await fetch('/api/service-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({clientId: currentUser.id, serviceType, amount}) });
+            const data = await res.json();
+            if(!data.success) return alert(data.message);
+            cachedData.servicePayload = {clientId: currentUser.id, serviceType, amount};
+            showToast(data.otpPreview);
+            showOtpScreen(`أدخل رمز التحقق (OTP) لطلب (${serviceType}) بمبلغ ${amount} SAR`, 'service');
+        }
+
+        async function verifyCurrentOtp() {
+            const inputs = document.querySelectorAll('#otp-inputs input');
+            const otp = Array.from(inputs).map(i => i.value).join('');
+            if(otp.length < 6) return alert('الرجاء إدخال الرمز المكون من 6 أرقام كاملاً.');
+
+            let url = '', payload = {};
+            if(activeOtpAction === 'login') {
+                url = '/api/auth/login-verify';
+                payload = { username: document.getElementById('login-user').value, otp };
+            } else if(activeOtpAction === 'register') {
+                url = '/api/auth/register-verify';
+                payload = { username: cachedData.regPayload.username, otp };
+            } else if(activeOtpAction === 'transfer') {
+                url = '/api/transfer-verify';
+                payload = { senderId: currentUser.id, otp };
+            } else if(activeOtpAction === 'service') {
+                url = '/api/service-verify';
+                payload = { clientId: currentUser.id, otp };
+            }
+
+            const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
+            const data = await res.json();
+            if(!data.success) return alert(data.message);
+
+            if (data.message) alert(data.message);
+            document.getElementById('security-toast').style.display = 'none';
+            document.getElementById('otp-screen').style.display = 'none';
+
+            if(activeOtpAction === 'login') {
+                enterDashboard(data.user);
+            } else if(activeOtpAction === 'register') {
+                showLogin();
+            } else if(activeOtpAction === 'transfer' || activeOtpAction === 'service') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('client-dashboard').style.display = 'flex';
+                updateClientUI();
+            }
+        }
+
+        function enterDashboard(user) {
+            currentUser = user;
+            document.getElementById('auth-screen').style.display = 'none';
+            if(currentUser.role === 'admin') {
+                document.getElementById('admin-dashboard').style.display = 'flex';
+                loadAdminData();
+            } else {
+                document.getElementById('client-dashboard').style.display = 'flex';
+                updateClientUI();
+            }
+        }
+
+        async function updateClientUI() {
+            const res = await fetch('/api/user/' + currentUser.id);
+            const data = await res.json();
+            currentUser = data.user;
+            document.getElementById('client-welcome').innerText = `أهلاً بك، ${currentUser.name}`;
+            document.getElementById('lbl-balance').innerText = currentUser.balance.toLocaleString();
+            document.getElementById('info-iban').innerText = currentUser.iban;
+
+            let txHtml = '';
+            (data.transactions || []).forEach(tx => {
+                txHtml += `<tr><td>إلى: ${tx.recipientName}</td><td style="color:red;">-${tx.amount} SAR</td><td>${tx.time}</td></tr>`;
+            });
+            document.getElementById('client-tx-tbody').innerHTML = txHtml || '<tr><td colspan="3">لا توجد عمليات</td></tr>';
+        }
+
+        async function loadAdminData() {
+            const res = await fetch('/api/admin/data');
+            const data = await res.json();
+            let uHtml = '';
+            data.db.users.filter(u => u.role !== 'admin').forEach(u => {
+                uHtml += `<tr><td>${u.name}</td><td>${u.balance} SAR</td><td><span class="${u.status==='Active'?'badge-active':'badge-frozen'}">${u.status}</span></td><td><button onclick="toggleUser(${u.id})">تجميد/تفعيل</button></td></tr>`;
+            });
+            document.getElementById('admin-users-tbody').innerHTML = uHtml;
+
+            let lHtml = '';
+            data.db.loans.forEach(l => {
+                lHtml += `<tr><td>${l.client}</td><td>${l.serviceType}</td><td>${l.amount} SAR</td><td>${l.status === 'Pending' ? `<button onclick="loanAction(${l.id}, 'approve')">موافقة وصرف</button> <button class="secondary-btn" onclick="loanAction(${l.id}, 'reject')">رفض</button>` : l.status}</td></tr>`;
+            });
+            document.getElementById('admin-loans-tbody').innerHTML = lHtml;
+        }
+
+        async function loanAction(loanId, action) {
+            await fetch('/api/admin/loan-action', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({loanId, action}) });
+            loadAdminData();
+        }
+        async function toggleUser(userId) {
+            await fetch('/api/admin/toggle-user', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({userId}) });
+            loadAdminData();
+        }
+        function showRegister() { document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; }
+        function showLogin() { document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; }
+        function switchClientTab(t, el) {
+            document.querySelectorAll('.client-tab-content').forEach(d => d.style.display = 'none');
+            document.querySelectorAll('sidebar li').forEach(li => li.classList.remove('active'));
+            document.getElementById('tab-' + t).style.display = 'block';
+            el.classList.add('active');
+        }
+    </script>
+</body>
+</html>
