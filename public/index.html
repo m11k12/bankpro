@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>بنك الأمان - المنظومة المصرفية الآمنة</title>
+    <title>بنك الأمان - BANK AL-AMAN</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,19 +20,17 @@
             <div style="margin-bottom:20px;">
                 <h2 style="color:#064e3b; margin:0; font-size:26px;">بنك الأمان</h2>
                 <p style="color:#64748b; font-size:13px; margin:5px 0;">الخدمات المصرفية الرقمية الآمنة • المملكة العربية السعودية</p>
-                <div style="font-size:11px; color:#059669; background:#d1fae5; padding:4px; border-radius:4px; margin-top:8px;">🔒 اتصال مشفر SSL 256-bit • حماية RBAC صارمة</div>
+                <div style="font-size:11px; color:#059669; background:#d1fae5; padding:6px; border-radius:6px; margin-top:8px; font-weight:bold;">🔒 اتصال مشفر SSL 256-bit • حماية RBAC صارمة</div>
             </div>
             
             <div id="login-form">
-                <input type="text" id="login-user" placeholder="اسم المستخدم (Username) مثال: hassan أو admin">
-                <input type="password" id="login-pin" placeholder="كلمة المرور (Password)">
+                <input type="text" id="login-user" placeholder="أدخل اسم المستخدم (مثال: admin أو hassan)">
+                <input type="password" id="login-pin" placeholder="••••••••">
                 <button onclick="requestLoginOtp()">تسجيل الدخول الآمن</button>
                 <button class="secondary-btn" onclick="showRegister()">فتح حساب بنكي جديد</button>
-                <div style="margin-top:15px; font-size:12px; color:#475569; background:#f1f5f9; padding:10px; border-radius:6px; text-align:right;">
-                    <strong>حسابات التجربة السريعة:</strong><br>
-                    • العميل: <code>hassan</code> / <code>1234</code><br>
-                    • العميل 2: <code>mohamed</code> / <code>1234</code><br>
-                    • المشرف: <code>admin</code> / <code>admin123</code>
+                <div style="margin-top:15px; font-size:12px; color:#475569; background:#f1f5f9; padding:12px; border-radius:6px; text-align:right;">
+                    <strong>حسابات التجربة السريعة (اضغط للتعبئة الفورية):</strong> بيادات حية مترابطة<br>
+                    جرب التحويل الفعلي من حساب حسن إلى حساب محمد، ثم سجل الخروج وادخل بحساب محمد وادخل بحساب المشرف (admin) لمراقبة جميع الحسابات والموافقة على القروض.
                 </div>
             </div>
 
@@ -83,6 +81,8 @@
                     <h3 style="margin-top:0; color:#64748b; font-size:14px;">إجمالي الرصيد المتاح</h3>
                     <div style="font-size:34px; font-weight:bold; color:var(--primary); margin:10px 0;"><span id="lbl-balance">0</span> <span style="font-size:16px;">SAR</span></div>
                     <p style="margin:5px 0; font-size:13px; color:#475569;"><strong>رقم الـ IBAN:</strong> <span id="info-iban" style="font-family:monospace; font-weight:bold; color:#0f172a;"></span></p>
+                    <button onclick="switchClientTab('transfer', document.querySelectorAll('sidebar li')[1])" style="max-width:180px; margin-top:15px; padding:10px;">تحويل أموال</button>
+                    <button onclick="switchClientTab('loans', document.querySelectorAll('sidebar li')[2])" class="secondary-btn" style="max-width:180px; margin-top:15px; display:inline-block; width:auto; padding:10px 15px;">طلب قرض</button>
                 </div>
                 
                 <div class="card">
@@ -108,15 +108,13 @@
             <div id="tab-loans" class="client-tab-content" style="display:none;">
                 <div class="card" style="max-width:650px;">
                     <h2 style="margin-top:0; color:var(--primary);">مركز القروض والتمويل (Loan Center)</h2>
-                    <p style="font-size:13px; color:#64748b;">قدم طلب تمويل حقيقي، وعند موافقة المشرف يُضاف المبلغ فوراً لرصيدك.</p>
-                    <label style="font-weight:bold; font-size:13px;">مبلغ التمويل المطلوب (SAR):</label>
-                    <input type="number" id="service-amount" placeholder="30000">
-                    <label style="font-weight:bold; font-size:13px; margin-top:10px; display:block;">نوع التمويل:</label>
-                    <select id="service-type">
-                        <option value="تمويل شخصي">تمويل شخصي</option>
-                        <option value="تمويل سيارات">تمويل سيارات</option>
-                        <option value="قرض عقاري">قرض عقاري</option>
-                    </select>
+                    <p style="font-size:13px; color:#64748b;">قدم طلب قرض حقيقي، وعند موافقة المشرف يضاف المبلغ لرصيدك ويمكنك سداد الأقساط.</p>
+                    <label style="font-weight:bold; font-size:13px; margin-top:10px; display:block;">مبلغ التمويل المطلوب (SAR):</label>
+                    <input type="number" id="service-amount" value="30000">
+                    <label style="font-weight:bold; font-size:13px; margin-top:10px; display:block;">مدة السداد:</label>
+                    <select id="service-duration"><option value="24 شهر (سنتان)">24 شهر (سنتان)</option></select>
+                    <label style="font-weight:bold; font-size:13px; margin-top:10px; display:block;">الغرض من القرض:</label>
+                    <select id="service-type"><option value="تمويل شخصي">تمويل شخصي</option></select>
                     <button onclick="requestServiceOtp()">رفع طلب التمويل إلى إدارة البنك (OTP)</button>
                 </div>
             </div>
