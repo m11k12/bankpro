@@ -2,52 +2,56 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>بنك الأمان - التحقق الشامل OTP</title>
+    <title>بنك الأمان - المنظومة المصرفية المتكاملة</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <div id="security-toast" class="security-toast">
-        <strong style="color:#fbbf24;">📩 رمز التحقق (OTP) المرسل لهاتفك وبريدك:</strong>
-        <div id="toast-body" style="font-size:18px; font-weight:bold; color:#34d399; margin:10px 0;"></div>
-        <button onclick="autoFillOtp()" style="background:#d97706; padding:6px; font-size:12px;">نسخ وتعبئة الرمز تلقائياً</button>
-        <span onclick="document.getElementById('security-toast').style.display='none'" style="cursor:pointer; float:left; color:#94a3b8;">✖</span>
+        <strong style="color:#fbbf24;">📩 رمز التحقق الأمني (OTP):</strong>
+        <div id="toast-body" style="font-size:20px; font-weight:bold; color:#34d399; margin:8px 0; letter-spacing: 2px;"></div>
+        <button onclick="autoFillOtp()" style="background:#d97706; padding:6px; font-size:12px; border-radius:4px; border:none; color:#fff; cursor:pointer;">تعبئة الرمز تلقائياً</button>
+        <span onclick="document.getElementById('security-toast').style.display='none'" style="cursor:pointer; float:left; color:#94a3b8; font-weight:bold;">✖</span>
     </div>
 
     <div id="auth-screen" class="auth-wrapper">
         <div class="auth-box">
-            <h2>بنك الأمان (BANK AL-AMAN)</h2>
+            <div style="margin-bottom: 20px;">
+                <h1 style="color:#064e3b; margin:0; font-size:24px;">بنك الأمان</h1>
+                <p style="color:#64748b; font-size:13px; margin:5px 0 0 0;">BANK AL-AMAN - النظام الآمن المعتمد</p>
+            </div>
             
             <div id="login-form">
-                <input type="text" id="login-user" placeholder="اسم المستخدم (مثال: hassan أو admin)">
+                <input type="text" id="login-user" placeholder="اسم المستخدم (مثل: hassan)">
                 <input type="password" id="login-pin" placeholder="الرمز السري (PIN)">
-                <button onclick="requestLoginOtp()">متابعة وتسجيل الدخول (يطلب OTP)</button>
-                <button class="secondary-btn" onclick="showRegister()">فتح حساب جديد (يطلب OTP)</button>
-                <div style="margin-top:15px; font-size:12px; color:#64748b; text-align:right;">
-                    • العميل: <code>hassan</code> / <code>1234</code><br>
-                    • العميل 2: <code>mohamed</code> / <code>1234</code><br>
+                <button onclick="requestLoginOtp()">تسجيل الدخول الآمن (OTP)</button>
+                <button class="secondary-btn" onclick="showRegister()">فتح حساب مصرفي جديد</button>
+                <div style="margin-top:20px; font-size:12px; color:#475569; text-align:right; background:#f1f5f9; padding:10px; border-radius:6px;">
+                    <strong>بيانات تجريبية سريعة:</strong><br>
+                    • عميل 1: <code>hassan</code> / <code>1234</code><br>
+                    • عميل 2: <code>mohamed</code> / <code>1234</code><br>
                     • الأدمن: <code>admin</code> / <code>admin123</code>
                 </div>
             </div>
 
             <div id="register-form" style="display:none;">
-                <h3>فتح حساب بنكي جديد</h3>
+                <h3 style="color:#064e3b; margin-top:0;">فتح حساب جديد</h3>
                 <input type="text" id="reg-name" placeholder="الاسم الكامل">
                 <input type="text" id="reg-user" placeholder="اسم المستخدم (انجليزي)">
                 <input type="email" id="reg-email" placeholder="البريد الإلكتروني">
-                <input type="text" id="reg-phone" placeholder="رقم الجوال">
+                <input type="text" id="reg-phone" placeholder="رقم الجوال (+966...)">
                 <input type="password" id="reg-pin" placeholder="الرمز السري (PIN)">
-                <button onclick="requestRegisterOtp()">إرسال رمز التحقق لإنشاء الحساب</button>
-                <button class="secondary-btn" onclick="showLogin()">العودة</button>
+                <button onclick="requestRegisterOtp()">متابعة وإنشاء الحساب (OTP)</button>
+                <button class="secondary-btn" onclick="showLogin()">العودة لتسجيل الدخول</button>
             </div>
 
             <div id="otp-screen" style="display:none;">
-                <h3 style="color:#d97706;">رمز التحقق الأمني (OTP)</h3>
+                <h3 style="color:#d97706;">رمز التحقق الثنائي (OTP)</h3>
                 <p id="otp-desc" style="font-size:13px; color:#475569;"></p>
                 <div class="otp-digits" id="otp-inputs">
                     <input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1"><input type="text" maxlength="1">
                 </div>
-                <button onclick="verifyCurrentOtp()" style="background:#059669;">تأكيد وإتمام العملية</button>
+                <button onclick="verifyCurrentOtp()" style="background:#059669;">تأكيد والتابعة</button>
                 <button class="secondary-btn" onclick="cancelOtp()">إلغاء</button>
             </div>
         </div>
@@ -56,49 +60,59 @@
     <div id="client-dashboard" class="dashboard-layout" style="display:none;">
         <sidebar>
             <div>
-                <h2>بنك الأمان</h2>
+                <h2 style="color:#34d399; text-align:center; margin-bottom:30px;">بنك الأمان</h2>
                 <ul>
                     <li class="active" onclick="switchClientTab('overview', this)">لوحة المعلومات</li>
-                    <li onclick="switchClientTab('transfer', this)">تحويل الأموال (يطلب OTP)</li>
-                    <li onclick="switchClientTab('loans', this)">طلب قرض أو تمويل (يطلب OTP)</li>
+                    <li onclick="switchClientTab('transfer', this)">التحويلات المالية (OTP)</li>
+                    <li onclick="switchClientTab('loans', this)">القروض والتمويل (OTP)</li>
                 </ul>
             </div>
-            <div><button class="secondary-btn" onclick="location.reload()">تسجيل الخروج</button></div>
+            <div><button class="secondary-btn" onclick="location.reload()" style="background:#b91c1c;">تسجيل الخروج</button></div>
         </sidebar>
         <div class="main-content">
-            <header><h1 id="client-welcome" style="color:var(--primary); margin:0;"></h1></header>
+            <header style="margin-bottom:25px; border-bottom:1px solid #e2e8f0; padding-bottom:15px;">
+                <h1 id="client-welcome" style="color:var(--primary); margin:0; font-size:22px;"></h1>
+            </header>
 
             <div id="tab-overview" class="client-tab-content">
-                <div class="card">
-                    <h3>الرصيد الحالي</h3>
-                    <div style="font-size:24px; font-weight:bold; color:var(--primary);"><span id="lbl-balance">0</span> SAR</div>
-                    <p><strong>IBAN:</strong> <span id="info-iban"></span></p>
+                <div class="card" style="border-right: 5px solid var(--primary);">
+                    <h3 style="margin-top:0; color:#64748b; font-size:14px;">الرصيد المتاح في الحساب</h3>
+                    <div style="font-size:32px; font-weight:bold; color:var(--primary); margin:10px 0;"><span id="lbl-balance">0</span> <span style="font-size:16px;">SAR</span></div>
+                    <p style="margin:5px 0 0 0; font-size:13px; color:#475569;"><strong>رقم الحساب الدولي (IBAN):</strong> <span id="info-iban" style="font-family:monospace; color:#0f172a;"></span></p>
                 </div>
                 <div class="card">
-                    <h3>سجل العمليات</h3>
-                    <table><thead><tr><th>إلى</th><th>المبلغ</th><th>التوقيت</th></tr></thead><tbody id="client-tx-tbody"></tbody></table>
+                    <h3 style="margin-top:0; color:var(--primary);">سجل المعاملات والعمليات الأخيرة</h3>
+                    <table>
+                        <thead><tr><th>نوع العملية</th><th>إلى المستفيد</th><th>المبلغ</th><th>التوقيت</th></tr></thead>
+                        <tbody id="client-tx-tbody"></tbody>
+                    </table>
                 </div>
             </div>
 
             <div id="tab-transfer" class="client-tab-content" style="display:none;">
-                <div class="card">
-                    <h2>تحويل الأموال (يتطلب رمز تحقق OTP دائماً)</h2>
-                    <input type="text" id="transfer-recipient" placeholder="اسم المستفيد أو IBAN (مثل mohamed)">
-                    <input type="number" id="transfer-amount" placeholder="المبلغ (SAR)">
-                    <button onclick="requestTransferOtp()">إرسال التحويل (طلب رمز OTP)</button>
+                <div class="card" style="max-width:600px;">
+                    <h2 style="margin-top:0; color:var(--primary);">تحويل الأموال المحلي</h2>
+                    <p style="font-size:13px; color:#64748b;">جميع عمليات التحويل تتطلب التحقق الفوري برمز OTP حرصاً على أمن أموالك.</p>
+                    <label style="font-size:13px; font-weight:bold;">رقم الـ IBAN أو اسم المستفيد:</label>
+                    <input type="text" id="transfer-recipient" placeholder="مثال: SA0380000000608010923841 أو mohamed">
+                    <label style="font-size:13px; font-weight:bold; margin-top:10px; display:block;">المبلغ المراد تحويله (SAR):</label>
+                    <input type="number" id="transfer-amount" placeholder="0.00">
+                    <button onclick="requestTransferOtp()">إرسال وتحويل المبلغ (طلب OTP)</button>
                 </div>
             </div>
 
             <div id="tab-loans" class="client-tab-content" style="display:none;">
-                <div class="card">
-                    <h2>طلب قرض أو خدمة بنكية (يتطلب رمز تحقق OTP دائماً)</h2>
+                <div class="card" style="max-width:600px;">
+                    <h2 style="margin-top:0; color:var(--primary);">طلب تمويل أو خدمة بنكية</h2>
+                    <label style="font-size:13px; font-weight:bold;">اختر نوع الخدمة:</label>
                     <select id="service-type">
                         <option value="قرض شخصي فوري">قرض شخصي فوري</option>
                         <option value="تمويل سيارات">تمويل سيارات</option>
-                        <option value="إصدار بطاقة ائتمانية إضافية">إصدار بطاقة ائتمانية إضافية</option>
+                        <option value="إصدار بطاقة ائتمانية">إصدار بطاقة ائتمانية إضافية</option>
                     </select>
-                    <input type="number" id="service-amount" placeholder="المبلغ المطلوب (SAR)">
-                    <button onclick="requestServiceOtp()">تقديم الطلب (طلب رمز OTP)</button>
+                    <label style="font-size:13px; font-weight:bold; margin-top:10px; display:block;">المبلغ المطلوب (SAR):</label>
+                    <input type="number" id="service-amount" placeholder="0.00">
+                    <button onclick="requestServiceOtp()">تقديم الطلب واعتماده (OTP)</button>
                 </div>
             </div>
         </div>
@@ -107,22 +121,28 @@
     <div id="admin-dashboard" class="dashboard-layout" style="display:none;">
         <sidebar>
             <div>
-                <h2>مركز الأدمن</h2>
+                <h2 style="color:#f59e0b; text-align:center; margin-bottom:30px;">لوحة تحكم الأدمن</h2>
                 <ul>
-                    <li class="active" onclick="loadAdminData()">إدارة المستخدمين والقروض</li>
+                    <li class="active">إدارة النظام والعملاء</li>
                 </ul>
             </div>
-            <div><button class="secondary-btn" onclick="location.reload()">تسجيل الخروج</button></div>
+            <div><button class="secondary-btn" onclick="location.reload()" style="background:#b91c1c;">تسجيل الخروج</button></div>
         </sidebar>
         <div class="main-content">
-            <h1>مركز التحكم الشامل (Admin Command Center)</h1>
+            <header style="margin-bottom:25px;"><h1 style="color:var(--primary); margin:0;">مركز التحكم والرقابة الشامل</h1></header>
             <div class="card">
-                <h2>العملاء</h2>
-                <table><thead><tr><th>الاسم</th><th>الرصيد</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody id="admin-users-tbody"></tbody></table>
+                <h3 style="margin-top:0; color:var(--primary);">حسابات العملاء المسجلين</h3>
+                <table>
+                    <thead><tr><th>اسم العميل</th><th>اسم المستخدم</th><th>الرصيد الحالي</th><th>الحالة</th><th>إجراء إداري</th></tr></thead>
+                    <tbody id="admin-users-tbody"></tbody>
+                </table>
             </div>
             <div class="card">
-                <h2>طلبات القروض والخدمات</h2>
-                <table><thead><tr><th>العميل</th><th>الخدمة</th><th>المبلغ</th><th>القرار</th></tr></thead><tbody id="admin-loans-tbody"></tbody></table>
+                <h3 style="margin-top:0; color:var(--primary);">طلبات القروض والتمويل المعلقة</h3>
+                <table>
+                    <thead><tr><th>العميل</th><th>نوع التمويل</th><th>المبلغ</th><th>قرار الإدارة</th></tr></thead>
+                    <tbody id="admin-loans-tbody"></tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -171,7 +191,7 @@
             const data = await res.json();
             if(!data.success) return alert(data.message);
             showToast(data.otpPreview);
-            showOtpScreen(`أدخل رمز التحقق (OTP) لتسجيل الدخول للحساب: ${username}`, 'login');
+            showOtpScreen(`أدخل رمز التحقق (OTP) المرسل لتأكيد دخول الحساب: ${username}`, 'login');
         }
 
         async function requestRegisterOtp() {
@@ -183,9 +203,9 @@
             const res = await fetch('/api/auth/register-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({name, username, email, phone, pin}) });
             const data = await res.json();
             if(!data.success) return alert(data.message);
-            cachedData.regPayload = {name, username, email, phone, pin};
+            cachedData.regPayload = {username};
             showToast(data.otpPreview);
-            showOtpScreen('أدخل رمز التحقق (OTP) لتأكيد فتح الحساب البنكي الجديد.', 'register');
+            showOtpScreen('أدخل رمز التحقق (OTP) لتأكيد فتح الحساب المصرفي.', 'register');
         }
 
         async function requestTransferOtp() {
@@ -194,9 +214,8 @@
             const res = await fetch('/api/transfer-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senderId: currentUser.id, recipientIban, amount}) });
             const data = await res.json();
             if(!data.success) return alert(data.message);
-            cachedData.transferPayload = {senderId: currentUser.id, recipientIban, amount};
             showToast(data.otpPreview);
-            showOtpScreen(`أدخل رمز التحقق (OTP) لتأكيد تحويل مبلغ ${amount} SAR`, 'transfer');
+            showOtpScreen(`أدخل رمز التحقق (OTP) لإتمام تحويل مبلغ ${amount} SAR`, 'transfer');
         }
 
         async function requestServiceOtp() {
@@ -205,7 +224,6 @@
             const res = await fetch('/api/service-request', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({clientId: currentUser.id, serviceType, amount}) });
             const data = await res.json();
             if(!data.success) return alert(data.message);
-            cachedData.servicePayload = {clientId: currentUser.id, serviceType, amount};
             showToast(data.otpPreview);
             showOtpScreen(`أدخل رمز التحقق (OTP) لطلب (${serviceType}) بمبلغ ${amount} SAR`, 'service');
         }
@@ -265,15 +283,15 @@
             const res = await fetch('/api/user/' + currentUser.id);
             const data = await res.json();
             currentUser = data.user;
-            document.getElementById('client-welcome').innerText = `أهلاً بك، ${currentUser.name}`;
+            document.getElementById('client-welcome').innerText = `مرحباً بك، ${currentUser.name}`;
             document.getElementById('lbl-balance').innerText = currentUser.balance.toLocaleString();
             document.getElementById('info-iban').innerText = currentUser.iban;
 
             let txHtml = '';
             (data.transactions || []).forEach(tx => {
-                txHtml += `<tr><td>إلى: ${tx.recipientName}</td><td style="color:red;">-${tx.amount} SAR</td><td>${tx.time}</td></tr>`;
+                txHtml += `<tr><td>تحويل صادر</td><td>${tx.recipientName}</td><td style="color:#b91c1c; font-weight:bold;">-${tx.amount} SAR</td><td>${tx.time}</td></tr>`;
             });
-            document.getElementById('client-tx-tbody').innerHTML = txHtml || '<tr><td colspan="3">لا توجد عمليات</td></tr>';
+            document.getElementById('client-tx-tbody').innerHTML = txHtml || '<tr><td colspan="4" style="color:#64748b;">لا توجد معاملات سابقة مسجلة</td></tr>';
         }
 
         async function loadAdminData() {
@@ -281,13 +299,13 @@
             const data = await res.json();
             let uHtml = '';
             data.db.users.filter(u => u.role !== 'admin').forEach(u => {
-                uHtml += `<tr><td>${u.name}</td><td>${u.balance} SAR</td><td><span class="${u.status==='Active'?'badge-active':'badge-frozen'}">${u.status}</span></td><td><button onclick="toggleUser(${u.id})">تجميد/تفعيل</button></td></tr>`;
+                uHtml += `<tr><td>${u.name}</td><td><code>${u.username}</code></td><td>${u.balance.toLocaleString()} SAR</td><td><span class="${u.status==='Active'?'badge-active':'badge-frozen'}">${u.status}</span></td><td><button onclick="toggleUser(${u.id})" style="padding:6px 12px; font-size:12px; background:#475569;">تجميد / تفعيل</button></td></tr>`;
             });
             document.getElementById('admin-users-tbody').innerHTML = uHtml;
 
             let lHtml = '';
             data.db.loans.forEach(l => {
-                lHtml += `<tr><td>${l.client}</td><td>${l.serviceType}</td><td>${l.amount} SAR</td><td>${l.status === 'Pending' ? `<button onclick="loanAction(${l.id}, 'approve')">موافقة وصرف</button> <button class="secondary-btn" onclick="loanAction(${l.id}, 'reject')">رفض</button>` : l.status}</td></tr>`;
+                lHtml += `<tr><td>${l.client}</td><td>${l.serviceType}</td><td>${l.amount.toLocaleString()} SAR</td><td>${l.status === 'Pending' ? `<button onclick="loanAction(${l.id}, 'approve')" style="padding:6px; font-size:12px; background:#059669; width:auto; display:inline-block;">موافقة</button> <button onclick="loanAction(${l.id}, 'reject')" style="padding:6px; font-size:12px; background:#b91c1c; width:auto; display:inline-block;">رفض</button>` : `<span style="font-weight:bold; color:${l.status==='Approved'?'#059669':'#b91c1c'}">${l.status}</span>`}</td></tr>`;
             });
             document.getElementById('admin-loans-tbody').innerHTML = lHtml;
         }
